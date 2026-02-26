@@ -28,6 +28,10 @@ export const auth = betterAuth({
 
   user: {
     additionalFields: {
+      name: {
+        type: "string",
+        required: true,
+      },
       image: {
         type: "string",
         required: false,

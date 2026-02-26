@@ -190,5 +190,5 @@ vercel --prod
 
 ---
 
-## 📜 License
-This project is licensed under the ISC License.
+## Server Live:
+https://skillbridge-server-liart.vercel.app/
