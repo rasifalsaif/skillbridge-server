@@ -23,7 +23,7 @@ const app: Application = express();
 // }))
 
 app.use(cors({
-    origin: process.env.APP_URL || "skillbridge-server-liart.vercel.app",
+    origin: process.env.APP_URL || "https://skillbridge-server-liart.vercel.app",
     credentials: true
 }))
 
