@@ -11,6 +11,7 @@ const register = async (req: Request, res: Response) => {
             data: user,
         });
     } catch (error: any) {
+        console.error('Registration error:', error);
         return res.status(400).json({
             success: false,
             message: error?.message || "Registration failed",
@@ -27,6 +28,7 @@ const login = async (req: Request, res: Response) => {
             data: session,
         });
     } catch (error: any) {
+        console.error('Login error:', error);
         return res.status(400).json({
             success: false,
             message: error?.message || "Invalid email or password",

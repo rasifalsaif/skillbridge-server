@@ -1,232 +1,8 @@
-var __defProp = Object.defineProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-
 // src/lib/prisma.ts
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import pg from "pg";
-
-// generated/prisma/client.ts
-import * as path from "path";
-import { fileURLToPath } from "url";
-
-// generated/prisma/internal/class.ts
-import * as runtime from "@prisma/client/runtime/client";
-var config = {
-  "previewFeatures": [],
-  "clientVersion": "7.3.0",
-  "engineVersion": "9d6ad21cbbceab97458517b147a6a09ff43aa735",
-  "activeProvider": "postgresql",
-  "inlineSchema": '// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = "prisma-client"\n  output   = "../generated/prisma"\n}\n\ndatasource db {\n  provider = "postgresql"\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  name      String\n  email     String   @unique\n  password  String?\n  banned    Boolean  @default(false) @map("isBanned")\n  createdAt DateTime @default(now())\n\n  tutorProfile    TutorProfile?\n  studentBookings Booking[]     @relation("StudentBookings")\n  reviews         Review[]\n  emailVerified   Boolean       @default(false)\n  image           String?\n  updatedAt       DateTime      @updatedAt\n  sessions        Session[]\n  accounts        Account[]\n\n  role String? @default("STUDENT")\n\n  @@map("user")\n}\n\nmodel Session {\n  id        String   @id\n  expiresAt DateTime\n  token     String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  ipAddress String?\n  userAgent String?\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([token])\n  @@index([userId])\n  @@map("session")\n}\n\nmodel Account {\n  id                    String    @id\n  accountId             String\n  providerId            String\n  userId                String\n  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)\n  accessToken           String?\n  refreshToken          String?\n  idToken               String?\n  accessTokenExpiresAt  DateTime?\n  refreshTokenExpiresAt DateTime?\n  scope                 String?\n  password              String?\n  createdAt             DateTime  @default(now())\n  updatedAt             DateTime  @updatedAt\n\n  @@index([userId])\n  @@map("account")\n}\n\nmodel Verification {\n  id         String   @id\n  identifier String\n  value      String\n  expiresAt  DateTime\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  @@index([identifier])\n  @@map("verification")\n}\n\nmodel Booking {\n  id        String        @id @default(uuid())\n  studentId String\n  tutorId   String\n  status    BookingStatus @default(UPCOMING)\n  createdAt DateTime      @default(now())\n\n  student User         @relation("StudentBookings", fields: [studentId], references: [id])\n  tutor   TutorProfile @relation(fields: [tutorId], references: [id])\n}\n\nenum BookingStatus {\n  UPCOMING\n  COMPLETED\n  CANCELLED\n}\n\nmodel TutorProfile {\n  id         String @id @default(uuid())\n  userId     String @unique\n  bio        String\n  pricePerHr Int\n  rating     Float  @default(0)\n\n  user         User           @relation(fields: [userId], references: [id])\n  categories   Category[]\n  availability Availability[]\n  bookings     Booking[]\n  reviews      Review[]\n}\n\nmodel Category {\n  id   String @id @default(uuid())\n  name String @unique\n\n  tutors TutorProfile[]\n}\n\nmodel Availability {\n  id        String @id @default(uuid())\n  tutorId   String\n  day       String\n  startTime String\n  endTime   String\n\n  tutor TutorProfile @relation(fields: [tutorId], references: [id])\n}\n\nmodel Review {\n  id        String   @id @default(uuid())\n  rating    Int\n  comment   String\n  createdAt DateTime @default(now())\n\n  studentId String\n  tutorId   String\n\n  student User         @relation(fields: [studentId], references: [id])\n  tutor   TutorProfile @relation(fields: [tutorId], references: [id])\n}\n',
-  "runtimeDataModel": {
-    "models": {},
-    "enums": {},
-    "types": {}
-  }
-};
-config.runtimeDataModel = JSON.parse('{"models":{"User":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"email","kind":"scalar","type":"String"},{"name":"password","kind":"scalar","type":"String"},{"name":"banned","kind":"scalar","type":"Boolean","dbName":"isBanned"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"tutorProfile","kind":"object","type":"TutorProfile","relationName":"TutorProfileToUser"},{"name":"studentBookings","kind":"object","type":"Booking","relationName":"StudentBookings"},{"name":"reviews","kind":"object","type":"Review","relationName":"ReviewToUser"},{"name":"emailVerified","kind":"scalar","type":"Boolean"},{"name":"image","kind":"scalar","type":"String"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"sessions","kind":"object","type":"Session","relationName":"SessionToUser"},{"name":"accounts","kind":"object","type":"Account","relationName":"AccountToUser"},{"name":"role","kind":"scalar","type":"String"}],"dbName":"user"},"Session":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"expiresAt","kind":"scalar","type":"DateTime"},{"name":"token","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"ipAddress","kind":"scalar","type":"String"},{"name":"userAgent","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"SessionToUser"}],"dbName":"session"},"Account":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"accountId","kind":"scalar","type":"String"},{"name":"providerId","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"AccountToUser"},{"name":"accessToken","kind":"scalar","type":"String"},{"name":"refreshToken","kind":"scalar","type":"String"},{"name":"idToken","kind":"scalar","type":"String"},{"name":"accessTokenExpiresAt","kind":"scalar","type":"DateTime"},{"name":"refreshTokenExpiresAt","kind":"scalar","type":"DateTime"},{"name":"scope","kind":"scalar","type":"String"},{"name":"password","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":"account"},"Verification":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"identifier","kind":"scalar","type":"String"},{"name":"value","kind":"scalar","type":"String"},{"name":"expiresAt","kind":"scalar","type":"DateTime"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":"verification"},"Booking":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"studentId","kind":"scalar","type":"String"},{"name":"tutorId","kind":"scalar","type":"String"},{"name":"status","kind":"enum","type":"BookingStatus"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"student","kind":"object","type":"User","relationName":"StudentBookings"},{"name":"tutor","kind":"object","type":"TutorProfile","relationName":"BookingToTutorProfile"}],"dbName":null},"TutorProfile":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"bio","kind":"scalar","type":"String"},{"name":"pricePerHr","kind":"scalar","type":"Int"},{"name":"rating","kind":"scalar","type":"Float"},{"name":"user","kind":"object","type":"User","relationName":"TutorProfileToUser"},{"name":"categories","kind":"object","type":"Category","relationName":"CategoryToTutorProfile"},{"name":"availability","kind":"object","type":"Availability","relationName":"AvailabilityToTutorProfile"},{"name":"bookings","kind":"object","type":"Booking","relationName":"BookingToTutorProfile"},{"name":"reviews","kind":"object","type":"Review","relationName":"ReviewToTutorProfile"}],"dbName":null},"Category":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"tutors","kind":"object","type":"TutorProfile","relationName":"CategoryToTutorProfile"}],"dbName":null},"Availability":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"tutorId","kind":"scalar","type":"String"},{"name":"day","kind":"scalar","type":"String"},{"name":"startTime","kind":"scalar","type":"String"},{"name":"endTime","kind":"scalar","type":"String"},{"name":"tutor","kind":"object","type":"TutorProfile","relationName":"AvailabilityToTutorProfile"}],"dbName":null},"Review":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"rating","kind":"scalar","type":"Int"},{"name":"comment","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"studentId","kind":"scalar","type":"String"},{"name":"tutorId","kind":"scalar","type":"String"},{"name":"student","kind":"object","type":"User","relationName":"ReviewToUser"},{"name":"tutor","kind":"object","type":"TutorProfile","relationName":"ReviewToTutorProfile"}],"dbName":null}},"enums":{},"types":{}}');
-async function decodeBase64AsWasm(wasmBase64) {
-  const { Buffer: Buffer2 } = await import("buffer");
-  const wasmArray = Buffer2.from(wasmBase64, "base64");
-  return new WebAssembly.Module(wasmArray);
-}
-config.compilerWasm = {
-  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_fast_bg.postgresql.mjs"),
-  getQueryCompilerWasmModule: async () => {
-    const { wasm } = await import("@prisma/client/runtime/query_compiler_fast_bg.postgresql.wasm-base64.mjs");
-    return await decodeBase64AsWasm(wasm);
-  },
-  importName: "./query_compiler_fast_bg.js"
-};
-function getPrismaClientClass() {
-  return runtime.getPrismaClient(config);
-}
-
-// generated/prisma/internal/prismaNamespace.ts
-var prismaNamespace_exports = {};
-__export(prismaNamespace_exports, {
-  AccountScalarFieldEnum: () => AccountScalarFieldEnum,
-  AnyNull: () => AnyNull2,
-  AvailabilityScalarFieldEnum: () => AvailabilityScalarFieldEnum,
-  BookingScalarFieldEnum: () => BookingScalarFieldEnum,
-  CategoryScalarFieldEnum: () => CategoryScalarFieldEnum,
-  DbNull: () => DbNull2,
-  Decimal: () => Decimal2,
-  JsonNull: () => JsonNull2,
-  ModelName: () => ModelName,
-  NullTypes: () => NullTypes2,
-  NullsOrder: () => NullsOrder,
-  PrismaClientInitializationError: () => PrismaClientInitializationError2,
-  PrismaClientKnownRequestError: () => PrismaClientKnownRequestError2,
-  PrismaClientRustPanicError: () => PrismaClientRustPanicError2,
-  PrismaClientUnknownRequestError: () => PrismaClientUnknownRequestError2,
-  PrismaClientValidationError: () => PrismaClientValidationError2,
-  QueryMode: () => QueryMode,
-  ReviewScalarFieldEnum: () => ReviewScalarFieldEnum,
-  SessionScalarFieldEnum: () => SessionScalarFieldEnum,
-  SortOrder: () => SortOrder,
-  Sql: () => Sql2,
-  TransactionIsolationLevel: () => TransactionIsolationLevel,
-  TutorProfileScalarFieldEnum: () => TutorProfileScalarFieldEnum,
-  UserScalarFieldEnum: () => UserScalarFieldEnum,
-  VerificationScalarFieldEnum: () => VerificationScalarFieldEnum,
-  defineExtension: () => defineExtension,
-  empty: () => empty2,
-  getExtensionContext: () => getExtensionContext,
-  join: () => join2,
-  prismaVersion: () => prismaVersion,
-  raw: () => raw2,
-  sql: () => sql
-});
-import * as runtime2 from "@prisma/client/runtime/client";
-var PrismaClientKnownRequestError2 = runtime2.PrismaClientKnownRequestError;
-var PrismaClientUnknownRequestError2 = runtime2.PrismaClientUnknownRequestError;
-var PrismaClientRustPanicError2 = runtime2.PrismaClientRustPanicError;
-var PrismaClientInitializationError2 = runtime2.PrismaClientInitializationError;
-var PrismaClientValidationError2 = runtime2.PrismaClientValidationError;
-var sql = runtime2.sqltag;
-var empty2 = runtime2.empty;
-var join2 = runtime2.join;
-var raw2 = runtime2.raw;
-var Sql2 = runtime2.Sql;
-var Decimal2 = runtime2.Decimal;
-var getExtensionContext = runtime2.Extensions.getExtensionContext;
-var prismaVersion = {
-  client: "7.3.0",
-  engine: "9d6ad21cbbceab97458517b147a6a09ff43aa735"
-};
-var NullTypes2 = {
-  DbNull: runtime2.NullTypes.DbNull,
-  JsonNull: runtime2.NullTypes.JsonNull,
-  AnyNull: runtime2.NullTypes.AnyNull
-};
-var DbNull2 = runtime2.DbNull;
-var JsonNull2 = runtime2.JsonNull;
-var AnyNull2 = runtime2.AnyNull;
-var ModelName = {
-  User: "User",
-  Session: "Session",
-  Account: "Account",
-  Verification: "Verification",
-  Booking: "Booking",
-  TutorProfile: "TutorProfile",
-  Category: "Category",
-  Availability: "Availability",
-  Review: "Review"
-};
-var TransactionIsolationLevel = runtime2.makeStrictEnum({
-  ReadUncommitted: "ReadUncommitted",
-  ReadCommitted: "ReadCommitted",
-  RepeatableRead: "RepeatableRead",
-  Serializable: "Serializable"
-});
-var UserScalarFieldEnum = {
-  id: "id",
-  name: "name",
-  email: "email",
-  password: "password",
-  banned: "banned",
-  createdAt: "createdAt",
-  emailVerified: "emailVerified",
-  image: "image",
-  updatedAt: "updatedAt",
-  role: "role"
-};
-var SessionScalarFieldEnum = {
-  id: "id",
-  expiresAt: "expiresAt",
-  token: "token",
-  createdAt: "createdAt",
-  updatedAt: "updatedAt",
-  ipAddress: "ipAddress",
-  userAgent: "userAgent",
-  userId: "userId"
-};
-var AccountScalarFieldEnum = {
-  id: "id",
-  accountId: "accountId",
-  providerId: "providerId",
-  userId: "userId",
-  accessToken: "accessToken",
-  refreshToken: "refreshToken",
-  idToken: "idToken",
-  accessTokenExpiresAt: "accessTokenExpiresAt",
-  refreshTokenExpiresAt: "refreshTokenExpiresAt",
-  scope: "scope",
-  password: "password",
-  createdAt: "createdAt",
-  updatedAt: "updatedAt"
-};
-var VerificationScalarFieldEnum = {
-  id: "id",
-  identifier: "identifier",
-  value: "value",
-  expiresAt: "expiresAt",
-  createdAt: "createdAt",
-  updatedAt: "updatedAt"
-};
-var BookingScalarFieldEnum = {
-  id: "id",
-  studentId: "studentId",
-  tutorId: "tutorId",
-  status: "status",
-  createdAt: "createdAt"
-};
-var TutorProfileScalarFieldEnum = {
-  id: "id",
-  userId: "userId",
-  bio: "bio",
-  pricePerHr: "pricePerHr",
-  rating: "rating"
-};
-var CategoryScalarFieldEnum = {
-  id: "id",
-  name: "name"
-};
-var AvailabilityScalarFieldEnum = {
-  id: "id",
-  tutorId: "tutorId",
-  day: "day",
-  startTime: "startTime",
-  endTime: "endTime"
-};
-var ReviewScalarFieldEnum = {
-  id: "id",
-  rating: "rating",
-  comment: "comment",
-  createdAt: "createdAt",
-  studentId: "studentId",
-  tutorId: "tutorId"
-};
-var SortOrder = {
-  asc: "asc",
-  desc: "desc"
-};
-var QueryMode = {
-  default: "default",
-  insensitive: "insensitive"
-};
-var NullsOrder = {
-  first: "first",
-  last: "last"
-};
-var defineExtension = runtime2.Extensions.defineExtension;
-
-// generated/prisma/enums.ts
-var BookingStatus = {
-  UPCOMING: "UPCOMING",
-  COMPLETED: "COMPLETED",
-  CANCELLED: "CANCELLED"
-};
-
-// generated/prisma/client.ts
-globalThis["__dirname"] = path.dirname(fileURLToPath(import.meta.url));
-var PrismaClient = getPrismaClientClass();
-
-// src/lib/prisma.ts
+import { PrismaClient } from "@prisma/client";
 var connectionString = `${process.env.DATABASE_URL}`;
 var pool = new pg.Pool({ connectionString });
 var adapter = new PrismaPg(pool);
@@ -543,6 +319,13 @@ var reviewRouter = router2;
 
 // src/modules/booking/booking.routes.ts
 import express3 from "express";
+
+// generated/prisma/enums.ts
+var BookingStatus = {
+  UPCOMING: "UPCOMING",
+  COMPLETED: "COMPLETED",
+  CANCELLED: "CANCELLED"
+};
 
 // src/modules/booking/booking.service.ts
 var createBooking = async (studentId, tutorId) => {
@@ -991,36 +774,37 @@ import cors from "cors";
 import { toNodeHandler } from "better-auth/node";
 
 // src/middlewares/globalErrorHandling.ts
+import { Prisma } from "@prisma/client";
 function errorHandler(err, req, res, next) {
   console.error("Global Error Handler Catch:", err);
   let statusCode = 500;
   let errorMessage = "Internal Server Error";
   let errorDetails = err;
-  if (err instanceof prismaNamespace_exports.PrismaClientValidationError) {
+  if (err instanceof Prisma.PrismaClientValidationError) {
     statusCode = 400;
     errorMessage = "You provide incorrect field type or missing fields!";
-  } else if (err instanceof prismaNamespace_exports.PrismaClientKnownRequestError) {
+  } else if (err instanceof Prisma.PrismaClientKnownRequestError) {
     if (err.code === "P2025") {
       statusCode = 400;
       errorMessage = "An operation failed because it depends on one or more records that were required but not found. {cause}";
     }
-  } else if (err instanceof prismaNamespace_exports.PrismaClientKnownRequestError) {
+  } else if (err instanceof Prisma.PrismaClientKnownRequestError) {
     if (err.code === "P2002") {
       statusCode = 400;
       errorMessage = "Duplicate key error";
     }
-  } else if (err instanceof prismaNamespace_exports.PrismaClientKnownRequestError) {
+  } else if (err instanceof Prisma.PrismaClientKnownRequestError) {
     if (err.code === "P2003") {
       statusCode = 400;
       errorMessage = "Foreign key constraint failed";
     }
-  } else if (err instanceof prismaNamespace_exports.PrismaClientUnknownRequestError) {
+  } else if (err instanceof Prisma.PrismaClientUnknownRequestError) {
     statusCode = 500;
     errorMessage = "Error occurred during query execution";
-  } else if (err instanceof prismaNamespace_exports.PrismaClientRustPanicError) {
+  } else if (err instanceof Prisma.PrismaClientRustPanicError) {
     statusCode = 500;
     errorMessage = "PANIC: internal error: entered unreachable code";
-  } else if (err instanceof prismaNamespace_exports.PrismaClientInitializationError) {
+  } else if (err instanceof Prisma.PrismaClientInitializationError) {
     if (err.errorCode === "P1000") {
       statusCode = 401;
       errorMessage = "Authentication failed. Please check your credentials.";
