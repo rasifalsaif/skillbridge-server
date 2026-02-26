@@ -14,6 +14,35 @@ SkillBridge is a modern platform designed to connect students with professional 
 
 ---
 
+## ✨ Key Features
+
+### 🔐 Authentication & Authorization
+- **Multi-Role Support**: Tailored experiences and permissions for **Students**, **Tutors**, and **Admins**.
+- **Secure Sessions**: Powered by `Better Auth` for industry-standard session management.
+- **Social Integration**: One-click login with Google OAuth.
+- **Email Verification**: Automated verification flow via SMTP (Nodemailer).
+
+### 👨‍🏫 Tutor Management
+- **Professional Profiles**: Tutors can showcase their expertise, bio, and pricing.
+- **Slot-Based Availability**: Manage weekly schedules with flexible time slots.
+- **Smart Discovery**: Students can filter tutors by price range, average rating, and subject category.
+
+### 📅 Booking Lifecycle
+- **Instant Scheduling**: Students can book available tutors directly.
+- **Real-Time Tracking**: Monitor booking statuses from `UPCOMING` to `COMPLETED` or `CANCELLED`.
+- **Integrated History**: Clear overview of all past and current learning sessions.
+
+### ⭐ Quality Assurance
+- **Tutor Reviews**: Transparent student feedback system with ratings and comments.
+- **Trust Metrics**: Aggregated ratings displayed on profiles to ensure platform quality.
+
+### 🛡️ Administrative Control
+- **User Moderation**: Admins can oversee all users and ban/unban profiles to maintain safety.
+- **Global Monitoring**: High-level visibility into all platform-wide bookings and activities.
+- **Category Management**: Centralized management of subject categories and learning areas.
+
+---
+
 ## 🛠 Prerequisites
 
 Ensure you have the following installed:
@@ -138,7 +167,7 @@ Handled by **Better Auth**. Standard endpoints include:
 | :--- | :--- | :--- | :--- | :--- |
 | GET | `/users` | Admin | List users | - |
 | GET | `/bookings` | Admin | Monitor bookings | - |
-| PATCH | `/users/:id` | Admin | Update status | `{"isBanned": true}` |
+| PATCH | `/users/:id` | Admin | Update status | `{"banned": true}` |
 
 ### 📚 Categories (`/categories`)
 | Method | Endpoint | Auth | Description |

@@ -18,7 +18,7 @@ model User {
   name      String
   email     String   @unique
   password  String?
-  isBanned  Boolean  @default(false)
+  banned    Boolean  @default(false) @map("isBanned")
   createdAt DateTime @default(now())
 
   tutorProfile    TutorProfile?
@@ -94,7 +94,6 @@ model Booking {
   tutor   TutorProfile @relation(fields: [tutorId], references: [id])
 }
 
-
 enum BookingStatus {
   UPCOMING
   COMPLETED
@@ -143,5 +142,4 @@ model Review {
 
   student User         @relation(fields: [studentId], references: [id])
   tutor   TutorProfile @relation(fields: [tutorId], references: [id])
-
 }

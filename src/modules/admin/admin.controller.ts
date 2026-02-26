@@ -24,7 +24,7 @@ const getAllBookings = async (req: Request, res: Response) => {
 const updateUserStatus = async (req: Request, res: Response) => {
     const user = await adminService.updateUserStatus(
         req.params.id as string,
-        req.body.isBanned
+        req.body.banned
     );
 
     res.status(200).json({

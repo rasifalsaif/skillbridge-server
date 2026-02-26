@@ -7,7 +7,7 @@ const getAllUsers = async () => {
             name: true,
             email: true,
             role: true,
-            isBanned: true,
+            banned: true,
         },
     });
 };
@@ -24,10 +24,10 @@ const getAllBookings = async () => {
     });
 };
 
-const updateUserStatus = async (id: string, isBanned: boolean) => {
+const updateUserStatus = async (id: string, banned: boolean) => {
     return await prisma.user.update({
         where: { id },
-        data: { isBanned }
+        data: { banned }
     });
 };
 
