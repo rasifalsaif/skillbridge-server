@@ -1061,7 +1061,7 @@ function notFound(req, res) {
 // src/app.ts
 var app = express6();
 app.use(cors({
-  origin: process.env.APP_URL || "https://skillbridge-client-flame.vercel.app",
+  origin: process.env.APP_URL || "https://skillbridge-server-liart.vercel.app",
   credentials: true
 }));
 app.use(express6.json());
