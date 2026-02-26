@@ -69,46 +69,81 @@ Ensure you have the following installed:
 ### 🔐 Authentication (`/api/auth`)
 Handled by **Better Auth**. Standard endpoints include:
 - `POST /sign-up/email`: Register a new user
+  ```json
+  {
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "securePassword123"
+  }
+  ```
 - `POST /sign-in/email`: Login with email
+  ```json
+  {
+    "email": "john@example.com",
+    "password": "securePassword123"
+  }
+  ```
 - `POST /sign-out`: Logout current session
 - `GET /get-session`: Get current user session
 - `GET /callback/google`: Google OAuth callback
 
 ### 👨‍🏫 Tutor Management (`/api/tutors`)
-| Method | Endpoint | Auth | Description |
-| :--- | :--- | :--- | :--- |
-| GET | `/` | Public | List all tutors with filters |
-| GET | `/:id` | Public | Get detailed tutor profile |
-| GET | `/` | Tutor | Get tutor dashboard data |
-| GET | `/availability` | Tutor | Get current availability |
-| POST | `/profile` | Tutor | Create tutor profile |
-| PUT | `/profile` | Tutor | Update tutor profile |
-| PUT | `/availability` | Tutor | Update availability slots |
+| Method | Endpoint | Auth | Description | Sample Input |
+| :--- | :--- | :--- | :--- | :--- |
+| GET | `/` | Public | List tutors | - |
+| GET | `/:id` | Public | Tutor details | - |
+| GET | `/` | Tutor | Dashboard | - |
+| GET | `/availability` | Tutor | Get availability | - |
+| POST | `/profile` | Tutor | Create profile | See below |
+| PUT | `/profile` | Tutor | Update profile | See below |
+| PUT | `/availability` | Tutor | Set availability | See below |
+
+#### Tutor Profile (`POST/PUT /profile`)
+```json
+{
+  "bio": "Expert math tutor with 5 years of experience in Calculus and Algebra.",
+  "pricePerHr": 45,
+  "categoryIds": ["category-uuid-1", "category-uuid-2"]
+}
+```
+
+#### Availability (`PUT /availability`)
+```json
+[
+  { "day": "Monday", "startTime": "09:00", "endTime": "12:00" },
+  { "day": "Wednesday", "startTime": "14:00", "endTime": "17:00" }
+]
+```
+
+### 📅 Bookings (`/api/bookings`)
+| Method | Endpoint | Auth | Description | Sample Input |
+| :--- | :--- | :--- | :--- | :--- |
+| GET | `/` | Student | My bookings | - |
+| GET | `/:id` | Student | Booking details | - |
+| POST | `/` | Student | Create booking | `{"tutorId": "tutor-uuid"}` |
+| PUT | `/profiles` | Student | Update profile | Same as Tutor Profile |
+
+### ⭐ Reviews (`/api/reviews`)
+#### POST `/` (Student)
+```json
+{
+  "tutorId": "tutor-profile-uuid",
+  "rating": 5,
+  "comment": "Excellent teaching style, very patient!"
+}
+```
+
+### 🛡️ Admin (`/api/admin`)
+| Method | Endpoint | Auth | Description | Sample Input |
+| :--- | :--- | :--- | :--- | :--- |
+| GET | `/users` | Admin | List users | - |
+| GET | `/bookings` | Admin | Monitor bookings | - |
+| PATCH | `/users/:id` | Admin | Update status | `{"isBanned": true}` |
 
 ### 📚 Categories (`/categories`)
 | Method | Endpoint | Auth | Description |
 | :--- | :--- | :--- | :--- |
-| GET | `/` | Admin | List all available categories |
-
-### 📅 Bookings (`/api/bookings`)
-| Method | Endpoint | Auth | Description |
-| :--- | :--- | :--- | :--- |
-| GET | `/` | Student | Get your list of bookings |
-| GET | `/:id` | Student | Get specific booking details |
-| POST | `/` | Student | Create a new booking |
-| PUT | `/profiles` | Student | Update profile as student/tutor |
-
-### ⭐ Reviews (`/api/reviews`)
-| Method | Endpoint | Auth | Description |
-| :--- | :--- | :--- | :--- |
-| POST | `/` | Student | Submit a review for a tutor |
-
-### 🛡️ Admin (`/api/admin`)
-| Method | Endpoint | Auth | Description |
-| :--- | :--- | :--- | :--- |
-| GET | `/users` | Admin | List all registered users |
-| GET | `/bookings` | Admin | Monitor all platform bookings |
-| PATCH | `/users/:id` | Admin | Ban/Unban or update user status |
+| GET | `/` | Admin | List all categories |
 
 ---
 
