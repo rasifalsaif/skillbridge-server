@@ -28,26 +28,8 @@ export const auth = betterAuth({
 
   user: {
     additionalFields: {
-      role: {
-        type: "string",
-        defaultValue: "STUDENT",
-        required: false
-      },
-
-      banned: {
-        type: "boolean",
-        defaultValue: false,
-        required: false,
-      },
-
       image: {
         type: "string",
-        required: false,
-      },
-
-      emailVerified: {
-        type: "boolean",
-        defaultValue: false,
         required: false,
       },
     },
