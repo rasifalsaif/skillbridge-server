@@ -6,6 +6,7 @@ function errorHandler(err: any,
     res: Response,
     next: NextFunction
 ) {
+    console.error("Global Error Handler Catch:", err);
     let statusCode = 500;
     let errorMessage = "Internal Server Error";
     let errorDetails = err;

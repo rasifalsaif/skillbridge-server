@@ -20,7 +20,7 @@ export const auth = betterAuth({
     provider: "postgresql",
   }),
 
-  trustedOrigins: [process.env.APP_URL!],
+  trustedOrigins: [process.env.APP_URL!, process.env.BETTER_AUTH_URL!],
 
   plugins: [
     admin()

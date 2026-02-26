@@ -7,6 +7,7 @@ var __export = (target, all) => {
 // src/lib/prisma.ts
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
+import pg from "pg";
 
 // generated/prisma/client.ts
 import * as path from "path";
@@ -227,7 +228,8 @@ var PrismaClient = getPrismaClientClass();
 
 // src/lib/prisma.ts
 var connectionString = `${process.env.DATABASE_URL}`;
-var adapter = new PrismaPg({ connectionString });
+var pool = new pg.Pool({ connectionString });
+var adapter = new PrismaPg(pool);
 var prisma = new PrismaClient({ adapter });
 
 // src/modules/admin/admin.routes.ts
@@ -252,7 +254,7 @@ var auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql"
   }),
-  trustedOrigins: [process.env.APP_URL],
+  trustedOrigins: [process.env.APP_URL, process.env.BETTER_AUTH_URL],
   plugins: [
     admin()
   ],
@@ -990,6 +992,7 @@ import { toNodeHandler } from "better-auth/node";
 
 // src/middlewares/globalErrorHandling.ts
 function errorHandler(err, req, res, next) {
+  console.error("Global Error Handler Catch:", err);
   let statusCode = 500;
   let errorMessage = "Internal Server Error";
   let errorDetails = err;
